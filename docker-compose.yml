@@ -1,0 +1,14 @@
+version: "3.9" # specify docker-compose version
+
+services:
+  app:
+    build:
+      context: . # use the Dockerfile in the current directory
+      args:
+        - DEV=true # pass the DEV environment variable to the Dockerfile
+    ports:
+      - "8000:8000" # map port 8000 on the host to port 8000 in the container
+    volumes:
+      - ./app:/app # mount the app directory into the container at /app. Updates in code will be reflected in the container in real-time
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
