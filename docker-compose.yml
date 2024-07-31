@@ -12,3 +12,24 @@ services:
       - ./app:/app # mount the app directory into the container at /app. Updates in code will be reflected in the container in real-time
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db # set the database host to db Service name
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+
+    depends_on:
+      - db # wait for the db service to be ready before starting the app service
+
+  db: # define the db service
+    image: postgres:13-alpine # use the official Postgres image. Hub.Docker.Com
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data # mount the named volume dev-db-data to persist the Postgres data
+    environment:
+      - POSTGRES_DB=devdb # When the container starts, it will create a database named devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
+volumes:
+  dev-db-data: # create a named volume for the Postgres data
+
