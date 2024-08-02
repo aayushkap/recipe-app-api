@@ -10,8 +10,10 @@ services:
       - "8000:8000" # map port 8000 on the host to port 8000 in the container
     volumes:
       - ./app:/app # mount the app directory into the container at /app. Updates in code will be reflected in the container in real-time
-    command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+    command: > # Wait for DB to be ready, run migrations, and start the server
+      sh -c "python manage.py wait_for_db && 
+             python manage.py migrate && 
+             python manage.py runserver 0.0.0.0:8000"
     environment:
       - DB_HOST=db # set the database host to db Service name
       - DB_NAME=devdb
