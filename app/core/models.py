@@ -38,7 +38,8 @@ class UserManager(BaseUserManager):
         user.is_superuser = True
         user.save(using=self._db)
 
-        return User
+        # return the usr instance, not class
+        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
