@@ -8,3 +8,7 @@
 **Section 10**
 
 1.  Added Admin Portal Features For Custom User Model `(core/admin.py)`
+
+**Section 11**
+
+1.  Added Swagger View For APIs by installing drf_spectacular and updating app URLs.
