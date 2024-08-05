@@ -39,7 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
+    'core', # Custom core app
+    'rest_framework',
+    'rest_framework.authtoken', # Token authentication
+    'drf_spectacular', # OpenAPI schema generator
+    'user', # Custom user app
 ]
 
 MIDDLEWARE = [
@@ -133,3 +137,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Manually added to include custom user model
 AUTH_USER_MODEL = 'core.User'
+
+# Manually added to include rest_framework settings. Django will use this to render the API schema in Swagger UI
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
