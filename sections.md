@@ -12,3 +12,11 @@
 **Section 11**
 
 1.  Added Swagger View For APIs by installing drf_spectacular and updating app URLs.
+
+**Section 12**
+
+1.  Created new app for Users API.
+2.  Designed User API. `(user/views.py)`
+3.  Implemented Create User API `(user/views -> CreateUserView)`
+4.  Token Authentication for Users `(user/views -> CreateTokenView)`
+5.  Manage / Update User information API `(user/views -> ManageUserView)`
