@@ -77,5 +77,21 @@ class Recipe(models.Model):
     price = models.DecimalField(max_digits=5, decimal_places=2)
     link = models.CharField(max_length=255, blank=True)
 
+    tags = models.ManyToManyField("Tag")  # Many-to-many relationship with the Tag model. Many recipes can have many tags # noqa
+
     def __str__(self):
         return self.title
+
+
+class Tag(models.Model):
+    """Tag model for filtering, based on Django's basic built-in models.Model class""" # noqa
+
+    name = models.CharField(max_length=255)
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,  # If the user is deleted, delete the tag as well # noqa
+    )
+
+    def __str__(self):
+        return self.name

@@ -12,6 +12,7 @@ from recipe import views
 # Automatically generates Get, Post, Put, Patch and Delete URLs for our viewset
 router = DefaultRouter()
 router.register('recipes', views.RecipeViewSet) # Register the viewset with the router and provide a URL path # noqa
+router.register('tags', views.TagViewSet)  # Register the viewset with the router and provide a URL path # noqa
 
 app_name = 'recipe'
 
