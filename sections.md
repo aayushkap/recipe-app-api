@@ -20,3 +20,7 @@
 3.  Implemented Create User API `(user/views -> CreateUserView)`
 4.  Token Authentication for Users `(user/views -> CreateTokenView)`
 5.  Manage / Update User information API `(user/views -> ManageUserView)`
+
+**Section 13**
+
+1.  CRUD Recipe APIs

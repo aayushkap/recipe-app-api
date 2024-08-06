@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken', # Token authentication
     'drf_spectacular', # OpenAPI schema generator
     'user', # Custom user app
+    'recipe', # Custom recipe app
 ]
 
 MIDDLEWARE = [
