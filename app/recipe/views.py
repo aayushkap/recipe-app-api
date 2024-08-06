@@ -2,11 +2,14 @@
     Views for the recipe app
 """
 
-from rest_framework import viewsets
+from rest_framework import (
+    viewsets,
+    mixins # Mixins are classes that provide functionality to be inherited (mixed-in) by a subclass # noqa
+)
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from core.models import Recipe
+from core.models import Recipe, Tag
 from recipe import serializers
 
 
@@ -34,4 +37,27 @@ class RecipeViewSet(viewsets.ModelViewSet):
     # Override the perform_create method to save the user field
     def perform_create(self, serializer):
         """Create a new recipe with the current authenticated user"""
+        serializer.save(user=self.request.user)
+
+
+class TagViewSet(mixins.UpdateModelMixin,  # UpdateModelMixin is a mixin that provides an update() method # noqa
+                 mixins.ListModelMixin,  # ListModelMixin is a mixin that provides a list() method # noqa
+                 mixins.DestroyModelMixin,  # DestroyModelMixin is a mixin that provides a destroy() method # noqa
+                 viewsets.GenericViewSet  # GenericViewSet is a viewset that provides default create(), retrieve(), update(), and destroy() actions # noqa
+                 ):
+    """Manage tags in the database"""
+    serializer_class = serializers.TagSerializer
+    queryset = Tag.objects.all()
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    pagination_class = None
+
+    def get_queryset(self):
+        """Return objects for the current authenticated user only"""
+        return self.queryset.filter(user=self.request.user).order_by('-name')
+
+    def perform_create(self, serializer):
+        """Create a new tag"""
         serializer.save(user=self.request.user)

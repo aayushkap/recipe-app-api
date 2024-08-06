@@ -24,3 +24,10 @@
 **Section 13**
 
 1.  CRUD Recipe APIs
+
+**Section 14**
+
+1.  Implemented Tags Model for Recipies.
+2.  Implemented CRUD Operations for Tags.
+3.  Created Serializers for Tag Operations.
+4.  Created Test cases for Tags.
