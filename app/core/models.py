@@ -78,6 +78,7 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255, blank=True)
 
     tags = models.ManyToManyField("Tag")  # Many-to-many relationship with the Tag model. Many recipes can have many tags # noqa
+    ingredients = models.ManyToManyField("Ingredient")  # Many-to-many relationship with the Ingredient model. Many recipes can have many ingredients # noqa
 
     def __str__(self):
         return self.title
@@ -91,6 +92,20 @@ class Tag(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,  # If the user is deleted, delete the tag as well # noqa
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Ingredient(models.Model):
+    """Ingredient model for recipe, based on Django's basic built-in models.Model class""" # noqa
+
+    name = models.CharField(max_length=255)
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,  # If the user is deleted, delete the ingredient as well # noqa
     )
 
     def __str__(self):
