@@ -13,6 +13,8 @@ from recipe import views
 router = DefaultRouter()
 router.register('recipes', views.RecipeViewSet) # Register the viewset with the router and provide a URL path # noqa
 router.register('tags', views.TagViewSet)  # Register the viewset with the router and provide a URL path # noqa
+router.register('ingredients', views.IngredientViewSet)
+
 
 app_name = 'recipe'
 
