@@ -1,5 +1,6 @@
 """
-    Views for the recipe app
+    Views for the recipe app.
+    Since Tags and Ingredients views are similar, we can use mixins to reduce code duplication. # noqa
 """
 
 from rest_framework import (
@@ -39,48 +40,33 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Create a new recipe with the current authenticated user"""
         serializer.save(user=self.request.user)
 
-
-class TagViewSet(mixins.UpdateModelMixin,  # UpdateModelMixin is a mixin that provides an update() method # noqa
+class BaseRecipeAttrViewSet(mixins.UpdateModelMixin,  # UpdateModelMixin is a mixin that provides an update() method # noqa
                  mixins.ListModelMixin,  # ListModelMixin is a mixin that provides a list() method # noqa
                  mixins.DestroyModelMixin,  # DestroyModelMixin is a mixin that provides a destroy() method # noqa
                  viewsets.GenericViewSet  # GenericViewSet is a viewset that provides default create(), retrieve(), update(), and destroy() actions # noqa
-                 ):
-    """Manage tags in the database"""
-    serializer_class = serializers.TagSerializer
-    queryset = Tag.objects.all()
+                            ):
+    """Base viewset for user owned recipe attributes"""
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    #  This class is used to reduce code duplication in the Tag and Ingredient viewsets # noqa
 
-    pagination_class = None
+    # User must be authenticated to access the API
+    authentication_classes = [TokenAuthentication]  # Authentication classes to be used # noqa
+    permission_classes = [IsAuthenticated]  # Permission classes to be used # noqa
 
     def get_queryset(self):
         """Return objects for the current authenticated user only"""
         return self.queryset.filter(user=self.request.user).order_by('-name')
 
-    def perform_create(self, serializer):
-        """Create a new tag"""
-        serializer.save(user=self.request.user)
+
+class TagViewSet(BaseRecipeAttrViewSet):
+    """Manage tags in the database. Extends the BaseRecipeAttrViewSet."""
+    serializer_class = serializers.TagSerializer
+    queryset = Tag.objects.all()
 
 
-class IngredientViewSet(mixins.UpdateModelMixin,  # UpdateModelMixin is a mixin that provides an update() method # noqa
-                 mixins.ListModelMixin,  # ListModelMixin is a mixin that provides a list() method # noqa
-                 mixins.DestroyModelMixin,  # DestroyModelMixin is a mixin that provides a destroy() method # noqa
-                 viewsets.GenericViewSet  # GenericViewSet is a viewset that provides default create(), retrieve(), update(), and destroy() actions # noqa
-                        ):
-    """ Manage Ingredients in the Database"""
+class IngredientViewSet(BaseRecipeAttrViewSet):
+    """ Manage Ingredients in the Database. Extends the BaseRecipeAttrViewSet.""" # noqa
 
     """Manage tags in the database"""
     serializer_class = serializers.IngredientSerializer
     queryset = Ingredient.objects.all()
-
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        """Return objects for the current authenticated user only"""
-        return self.queryset.filter(user=self.request.user).order_by('-name')
-
-    def perform_create(self, serializer):
-        """Create a new tag"""
-        serializer.save(user=self.request.user)
