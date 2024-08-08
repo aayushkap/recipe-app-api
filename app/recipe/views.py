@@ -8,6 +8,14 @@ from rest_framework import (
     mixins, # Mixins are classes that provide functionality to be inherited (mixed-in) by a subclass # noqa
     status  # Status is a module that contains standard HTTP status codes # noqa
 )
+
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiParameter,
+    OpenApiTypes,
+)
+
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
@@ -17,6 +25,23 @@ from core.models import Recipe, Tag, Ingredient
 from recipe import serializers
 
 
+# Extend the schema view to add custom parameters to the API documentation # noqa
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='tags',
+                type=OpenApiTypes.STR,
+                description='Comma separated list of tags to filter by',
+            ),
+            OpenApiParameter(
+                name='ingredients',
+                type=OpenApiTypes.STR,
+                description='Comma separated list of ingredients to filter by',
+            ),
+        ]
+    )
+)
 class RecipeViewSet(viewsets.ModelViewSet):
     """View for Manage recipe APIs in the database"""
     serializer_class = serializers.RecipeDetailSerializer  # Serializer class to be used # noqa
@@ -26,10 +51,29 @@ class RecipeViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def _params_to_ints(self, qs):  # qs is a query string
+        """Convert a list of string IDs to a list of integers"""
+        return [int(str_id) for str_id in qs.split(',')]  # Convert the string IDs to integers and return them # noqa
+
     # Override the get_queryset method to return objects for the current authenticated user only # noqa
     def get_queryset(self):
         """Return objects for the current authenticated user only"""
-        return self.queryset.filter(user=self.request.user).order_by('-id')
+
+        tags = self.request.query_params.get('tags')  # Get the tags query parameter # noqa
+        ingredients = self.request.query_params.get('ingredients')  # Get the ingredients query parameter # noqa
+
+        queryset = self.queryset  # Get the queryset # noqa
+
+        if tags:
+            tag_ids = self._params_to_ints(tags)  # Convert the tags str list to integers # noqa
+            queryset = queryset.filter(tags__id__in=tag_ids)
+
+        if ingredients:
+            ingredient_ids = self._params_to_ints(ingredients)
+            queryset = queryset.filter(ingredients__id__in=ingredient_ids)
+
+        # Distinct because multiple tags and ingredients can be selected, for multiple recipies # noqa
+        return queryset.filter(user=self.request.user).order_by('-id').distinct()  # noqa
 
     def get_serializer_class(self):
         """Return aserializer class for Request"""
@@ -60,6 +104,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+# Extend the schema view to add custom parameters to the API documentation # noqa
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='assigned_only',
+                type=OpenApiTypes.INT, enum=[0, 1],
+                description='Filter out unassigned tags',
+            ),
+        ]
+    )
+)
 class BaseRecipeAttrViewSet(mixins.UpdateModelMixin,  # UpdateModelMixin is a mixin that provides an update() method # noqa
                  mixins.ListModelMixin,  # ListModelMixin is a mixin that provides a list() method # noqa
                  mixins.DestroyModelMixin,  # DestroyModelMixin is a mixin that provides a destroy() method # noqa
@@ -75,7 +132,16 @@ class BaseRecipeAttrViewSet(mixins.UpdateModelMixin,  # UpdateModelMixin is a mi
 
     def get_queryset(self):
         """Return objects for the current authenticated user only"""
-        return self.queryset.filter(user=self.request.user).order_by('-name')
+        assigned_only = bool(
+            int(self.request.query_params.get('assigned_only', 0))  # Get the assigned_only query parameter, default to 0 if not set # noqa
+        )
+
+        queryset = self.queryset  # Get the queryset # noqa
+
+        if assigned_only:
+            queryset = queryset.filter(recipe__isnull=False)  # Make sure there is a recipe assigned # noqa
+
+        return queryset.filter(user=self.request.user).order_by('-name').distinct()  # noqa
 
 
 class TagViewSet(BaseRecipeAttrViewSet):

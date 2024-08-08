@@ -44,3 +44,10 @@
 
 1.  Added image upload feature to the API.
 2.  Configured Docker Volumes to Store Static and Media files.
+
+**Section 17**
+
+1.  Added filtering recipies by tags/ingredients.
+2.  Add filtering tags/ingredients by those assigned recipies
+3.  Customized OpenAPI Schema.
+4.
