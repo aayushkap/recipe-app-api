@@ -31,3 +31,16 @@
 2.  Implemented CRUD Operations for Tags.
 3.  Created Serializers for Tag Operations.
 4.  Created Test cases for Tags.
+
+**Section 15**
+
+1.  Implemented Ingredients Model for Recipies.
+2.  Implemented CRUD Operations for Ingredients.
+3.  Created Serializers for Tag Operations.
+4.  Created Test cases for Ingredients.
+5.  Refactored code for Tags and Ingredients.
+
+**Section 16**
+
+1.  Added image upload feature to the API.
+2.  Configured Docker Volumes to Store Static and Media files.

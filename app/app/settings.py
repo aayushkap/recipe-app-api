@@ -129,7 +129,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+
+# Manually updated to include static files
+STATIC_URL = '/static/static/'  # Static is pre-compiled files, like CSS, JS, images
+MEDIA_URL = '/static/media/'    # Media is what is received from the user, during runtime. For development, we will serve media files from server
+
+# Manually added to include media files persisted in Docker volume
+MEDIA_ROOT = '/vol/web/media'
+STATIC_ROOT = '/vol/web/static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -142,4 +149,9 @@ AUTH_USER_MODEL = 'core.User'
 # Manually added to include rest_framework settings. Django will use this to render the API schema in Swagger UI
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# Upload images through browser interface
+SPECTACULAR_SETTINGS = {
+    'COMPONENT_SPLIT_REQUEST': True,
 }
