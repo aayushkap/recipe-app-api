@@ -11,6 +11,8 @@ from django.contrib.auth import get_user_model
 
 from core import models
 
+from unittest.mock import patch
+
 
 def create_user(email='test@example.com', password='testpass123'):
     return get_user_model().objects.create_user(email, password)
@@ -99,3 +101,17 @@ class ModelTests(TestCase):
         ingredient = models.Ingredient.objects.create(user=user, name="Sample Ingredient") # noqa
 
         self.assertEqual(str(ingredient), ingredient.name)
+
+    # Decorator to mock the uuid4 function. We want to replace the uuid4 function with a mock function that returns a fixed value # noqa
+    @patch("core.models.uuid.uuid4")
+    def test_recipe_file_name_uuid(self, mock_uuid):
+        """Test generating file name and path for recipe image"""
+
+        uuid = "test-uuid"
+        mock_uuid.return_value = uuid
+
+        file_path = models.recipe_image_file_path(None, "myimage.jpg")
+
+        expected_path = f"uploads/recipe/{uuid}.jpg"
+
+        self.assertEqual(file_path, expected_path)
