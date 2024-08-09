@@ -20,10 +20,13 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from django.conf.urls.static import static
 from django.conf import settings
 
+from core import views as core_views
+
 
 # Manually updated to include swagger view
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/health/", core_views.health_check, name="health_check"),
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path(
         "api/docs/",
