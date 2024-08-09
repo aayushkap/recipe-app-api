@@ -20,6 +20,7 @@ services:
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=changeme
+      - DEBUG=1 # enable debug mode
 
     depends_on:
       - db # wait for the db service to be ready before starting the app service

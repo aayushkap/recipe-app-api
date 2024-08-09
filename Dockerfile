@@ -10,6 +10,9 @@ COPY ./requirements.txt /tmp/requirements.txt
 # Copy the dev requirements file to the /tmp directory of the image
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 
+# Copy the dev requirements file to the /tmp directory of the image
+COPY ./scripts /scripts
+
 # Copy to App directory
 COPY ./app /app
 
@@ -27,7 +30,7 @@ RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     apk add --update --no-cache postgresql-client jpeg-dev && \
     apk add --update --no-cache --virtual .tmp-build-deps \
-        build-base musl-dev postgresql-dev libpq zlib zlib-dev && \
+        build-base musl-dev postgresql-dev libpq zlib zlib-dev linux-headers && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt; \
@@ -41,11 +44,14 @@ RUN python -m venv /py && \
     mkdir -p /vol/web/media && \
     mkdir -p /vol/web/static && \
     chown -R django-user:django-user /vol && \
-    chmod -R 755 /vol
+    chmod -R 755 /vol && \
+    chmod -R +x /scripts
 
 
 # Add the /py/bin directory to the PATH. All executables run in the Virtual Environment
-ENV PATH="/py/bin:$PATH"
+ENV PATH="/scripts:/py/bin:$PATH"
 
 # Run the application as the django-user
 USER django-user
+
+CMD ["run.sh"]
