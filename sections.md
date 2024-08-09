@@ -50,4 +50,9 @@
 1.  Added filtering recipies by tags/ingredients.
 2.  Add filtering tags/ingredients by those assigned recipies
 3.  Customized OpenAPI Schema.
-4.
+
+**Section 18**
+
+1.  Created docker-compose-deploy for deployment.
+2.  Created proxy dir for Nginx setup.
+3.  Set up sample .env file for deployment.
