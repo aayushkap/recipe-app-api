@@ -9,6 +9,8 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+from core.models import UserDetails
+
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the users object"""
@@ -69,3 +71,13 @@ class AuthTokenSerializer(serializers.Serializer):
         # If user authenticated successfully, set the user in the attrs and return it # noqa
         attrs["user"] = user
         return attrs
+
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+
+    age = serializers.IntegerField(default=0)
+
+    class Meta:
+        model = UserDetails
+        fields = ['id', 'age', 'country', 'city', 'favorite_food']
+        read_only_fields = ['id']

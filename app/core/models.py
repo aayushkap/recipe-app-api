@@ -74,6 +74,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
 
 
+class UserDetails(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE) # One-to-one relationship with the User model # noqa
+    age = models.IntegerField()
+    country = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    favorite_food = models.CharField(max_length=100, blank=True)
+
+    def __str__(self):
+        return f'{self.user.email} - Details'
+
+
 class Recipe(models.Model):
     """Recipe model based on Django's basic built-in models.Model class"""
 
